@@ -1,0 +1,45 @@
+<div id="trend"></div>
+
+<script type="text/javascript">
+  const lineSpec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "Real GDP Trend for Selected State",
+    "width": 800,
+    "height": 300,
+    "data": {
+      "url": "data/gdp_state_real_supply.csv"
+    },
+    "transform": [
+      {"filter": {"param": "state_selection"}},
+      {
+        "calculate": "year(datum.date)",
+        "as": "year"
+      },
+      {
+        "aggregate": [{"op": "sum", "field": "value", "as": "total_gdp"}],
+        "groupby": ["state", "year"]
+      }
+    ],
+    "mark": {"type": "line", "point": true, "strokeWidth": 2},
+    "encoding": {
+      "x": {"field": "year", "type": "ordinal", "title": "Year"},
+      "y": {
+        "field": "total_gdp",
+        "type": "quantitative",
+        "title": "Total Real GDP (RM million)"
+      },
+      "color": {
+        "field": "state",
+        "type": "nominal",
+        "legend": null
+      },
+      "tooltip": [
+        {"field": "state", "title": "State"},
+        {"field": "year", "title": "Year"},
+        {"field": "total_gdp", "title": "Real GDP (RM million)", "format": ","}
+      ]
+    }
+  };
+
+  vegaEmbed('#trend', lineSpec).then(console.log).catch(console.warn);
+</script>

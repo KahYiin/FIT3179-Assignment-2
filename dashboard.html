@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Malaysia GDP Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="dashboard"></div>
+
+  <script type="text/javascript">
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "description": "Interactive dashboard showing GDP by state and trends over time.",
+      "hconcat": [
+        // ---- LEFT: GDP by State (acts like map) ----
+        {
+          "width": 400,
+          "height": 400,
+          "data": {"url": "data/gdp_state_real_supply.csv"},
+          "transform": [
+            {"calculate": "year(datum.date)", "as": "year"},
+            {"filter": "datum.year == selected_year"},
+            {
+              "aggregate": [{"op": "sum", "field": "value", "as": "total_gdp"}],
+              "groupby": ["state"]
+            }
+          ],
+          "params": [
+            {
+              "name": "selected_year",
+              "value": 2022,
+              "bind": {
+                "input": "range",
+                "min": 2010,
+                "max": 2023,
+                "step": 1,
+                "name": "Select Year: "
+              }
+            },
+            {
+              "name": "state_selection",
+              "select": {"type": "point", "fields": ["state"]},
+              "bind": "legend"
+            }
+          ],
+          "mark": {"type": "bar", "cursor": "pointer"},
+          "encoding": {
+            "x": {
+              "field": "state",
+              "type": "nominal",
+              "sort": "-y",
+              "title": "State"
+            },
+            "y": {
+              "field": "total_gdp",
+              "type": "quantitative",
+              "title": "Total Real GDP (RM million)"
+            },
+            "color": {
+              "condition": {"param": "state_selection", "field": "state", "type": "nominal"},
+              "value": "#c0c0c0"
+            },
+            "tooltip": [
+              {"field": "state", "title": "State"},
+              {"field": "total_gdp", "title": "GDP (RM million)", "format": ","},
+              {"field": "year", "title": "Year"}
+            ]
+          }
+        },
+
+        // ---- RIGHT: GDP Trend Over Time ----
+        {
+          "width": 400,
+          "height": 400,
+          "data": {"url": "data/gdp_state_real_supply.csv"},
+          "transform": [
+            {"calculate": "year(datum.date)", "as": "year"},
+            {"filter": {"param": "state_selection"}},
+            {
+              "aggregate": [{"op": "sum", "field": "value", "as": "total_gdp"}],
+              "groupby": ["state", "year"]
+            }
+          ],
+          "mark": {"type": "line", "point": true, "strokeWidth": 2},
+          "encoding": {
+            "x": {"field": "year", "type": "ordinal", "title": "Year"},
+            "y": {"field": "total_gdp", "type": "quantitative", "title": "Total Real GDP (RM million)"},
+            "color": {"field": "state", "type": "nominal", "legend": null},
+            "tooltip": [
+              {"field": "state", "title": "State"},
+              {"field": "year", "title": "Year"},
+              {"field": "total_gdp", "title": "GDP (RM million)", "format": ","}
+            ]
+          }
+        }
+      ],
+      "config": {
+        "view": {"stroke": "transparent"},
+        "axis": {"labelFont": "Arial", "titleFont": "Arial"}
+      }
+    };
+
+    vegaEmbed('#dashboard', spec).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Malaysia GDP by State</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+
+  <script type="text/javascript">
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "description": "Malaysia Real GDP by State (Interactive Choropleth)",
+      "width": 800,
+      "height": 500,
+      "data": {
+        "url": "data/malaysia_states.topojson",   // replace with your topojson file
+        "format": {"type": "topojson", "feature": "states"}
+      },
+      "transform": [
+        {
+          "lookup": "properties.state",
+          "from": {
+            "data": {
+              "url": "data/gdp_state_real_supply.csv"
+            },
+            "key": "state",
+            "fields": ["value", "date"]
+          }
+        },
+        {"filter": "datum.date == year_selection"}
+      ],
+      "params": [
+        {
+          "name": "year_selection",
+          "value": 2022,
+          "bind": {
+            "input": "range",
+            "min": 2010,
+            "max": 2023,
+            "step": 1,
+            "name": "Select Year: "
+          }
+        },
+        {
+          "name": "state_selection",
+          "select": {"type": "point", "on": "click", "fields": ["properties.state"]}
+        }
+      ],
+      "mark": {"type": "geoshape", "stroke": "white"},
+      "encoding": {
+        "color": {
+          "field": "value",
+          "type": "quantitative",
+          "title": "GDP (RM million)",
+          "scale": {"scheme": "blues"}
+        },
+        "tooltip": [
+          {"field": "properties.state", "title": "State"},
+          {"field": "value", "title": "GDP (RM million)", "format": ","},
+          {"field": "date", "title": "Year"}
+        ],
+        "opacity": {
+          "condition": {"param": "state_selection", "value": 1},
+          "value": 0.8
+        }
+      }
+    };
+
+    vegaEmbed('#vis', spec).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>

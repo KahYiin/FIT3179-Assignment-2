@@ -1,10 +1,15 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 650,
+  "width": 1000,
   "height": 250,
   "title": {
     "text": "Sectoral GDP Composition by State",
-    "fontSize": 14
+    "fontSize": 20,
+    "fontWeight": "bold",
+    "color": "#1e3c72",
+    "anchor": "start",
+    "font": "Segoe UI",
+    "offset": 20
   },
   "params": [
     {

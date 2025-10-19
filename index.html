@@ -64,14 +64,14 @@
     }
     
     .main-content {
-      padding: 30px;
+      padding: 40px;
     }
     
     .viz-section {
-      margin-bottom: 40px;
+      margin-bottom: 50px;
       background: #fafbfc;
       border-radius: 12px;
-      padding: 25px;
+      padding: 30px;
       border: 2px solid #e1e4e8;
     }
     
@@ -81,7 +81,7 @@
     
     .viz-header h2 {
       color: #1e3c72;
-      font-size: 1.4em;
+      font-size: 1.5em;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
@@ -104,14 +104,8 @@
       width: 100%;
       background: white;
       border-radius: 8px;
-      padding: 15px;
+      padding: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    
-    .two-column-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
     }
     
     footer {
@@ -134,9 +128,13 @@
       border-top: 1px solid rgba(255,255,255,0.3);
     }
     
-    @media (max-width: 1100px) {
-      .two-column-section {
-        grid-template-columns: 1fr;
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 20px;
+      }
+      
+      .viz-section {
+        padding: 20px;
       }
       
       header h1 {
@@ -180,7 +178,8 @@
             Use the year
             slider to explore
             GDP changes over
-            time.
+            time. Click states
+            to select them.
           </div>
         </div>
         <div class="viz-container">
@@ -210,49 +209,42 @@
         </div>
       </div>
       
-      <!-- Two Column Section -->
-      <div class="two-column-section">
-        
-        <!-- Sectoral Composition -->
-        <div class="viz-section">
-          <div class="viz-header">
-            <h2><span class="icon">🏭</span> Sectoral GDP Mix</h2>
-            <div class="viz-description">
-              See how different
-              economic sectors contribute
-              to each state's
-              GDP. Services dominate
-              most states. Select
-              different states and
-              years to compare
-              economic structures.
-            </div>
-          </div>
-          <div class="viz-container">
-            <div id="sectoral_composition"></div>
+      <!-- Sectoral Composition -->
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2><span class="icon">🏭</span> Sectoral GDP Composition</h2>
+          <div class="viz-description">
+            See how different
+            economic sectors contribute
+            to each state's
+            GDP. Services dominate
+            most states. Select
+            different states and
+            years to compare
+            economic structures. If there is no data available for the selected options, the chart will appear empty.
           </div>
         </div>
-        
-        <!-- Unemployment -->
-        <div class="viz-section">
-          <div class="viz-header">
-            <h2><span class="icon">👥</span> Unemployment Duration</h2>
-            <div class="viz-description">
-              Visualizes unemployment patterns
-              by job search
-              duration. The darkest
-              layer shows long-term
-              unemployment (over 12
-              months). Adjust year
-              sliders to focus
-              on specific periods.
-            </div>
-          </div>
-          <div class="viz-container">
-            <div id="unemployment"></div>
+        <div class="viz-container">
+          <div id="sectoral_composition"></div>
+        </div>
+      </div>
+      
+      <!-- Unemployment -->
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2><span class="icon">👥</span> Unemployment by Duration</h2>
+          <div class="viz-description">
+            Visualizes unemployment patterns
+            by job search
+            duration. The darkest
+            layer shows long-term
+            unemployment (over 12
+            months).
           </div>
         </div>
-        
+        <div class="viz-container">
+          <div id="unemployment"></div>
+        </div>
       </div>
       
     </div>

@@ -1,24 +1,16 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 650,
+  "width": 900,
   "height": 250,
   "title": {
     "text": "Unemployment Trends by Duration (2016-2025)",
-    "fontSize": 14
+    "fontSize": 20,
+    "fontWeight": "bold",
+    "color": "#1e3c72",
+    "anchor": "start",
+    "font": "Segoe UI",
+    "offset": 20
   },
-  "params": [
-    {
-      "name": "DateRange",
-      "value": [1451606400000, 1725148800000],
-      "bind": {
-        "input": "range",
-        "min": 1451606400000,
-        "max": 1725148800000,
-        "step": 2629800000,
-        "name": "Date Range: "
-      }
-    }
-  ],
   "data": {
     "url": "lfs_month_duration.csv"
   },
@@ -48,7 +40,7 @@
     "x": {
       "field": "date",
       "type": "temporal",
-      "title": "Date",
+      "title": "Year",
       "axis": {
         "format": "%Y",
         "labelAngle": 0

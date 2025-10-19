@@ -4,10 +4,12 @@
   "height": 500,
   "title": {
     "text": "Real GDP Distribution Across Malaysia",
-    "fontSize": 18,
+    "fontSize": 20,
+    "fontWeight": "bold",
     "color": "#1e3c72",
     "anchor": "start",
-    "font": "Segoe UI"
+    "font": "Segoe UI",
+    "offset": 20
   },
   "params": [
     {

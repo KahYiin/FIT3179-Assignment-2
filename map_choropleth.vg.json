@@ -1,11 +1,13 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": "container",
+  "width": 1150,
   "height": 500,
   "title": {
     "text": "Real GDP Distribution Across Malaysia",
-    "fontSize": 16,
-    "anchor": "start"
+    "fontSize": 18,
+    "color": "#1e3c72",
+    "anchor": "start",
+    "font": "Segoe UI"
   },
   "params": [
     {
@@ -16,37 +18,65 @@
         "min": 2015,
         "max": 2023,
         "step": 1,
-        "name": "Year: "
-      }
-    },
-    {
-      "name": "StateSelection",
-      "select": {
-        "type": "point",
-        "fields": ["properties.name"]
+        "name": "Year: ",
+        "debounce": 10
       }
     }
   ],
+  "projection": {
+    "type": "mercator",
+    "center": [109.5, 4.2],
+    "scale": 3000
+  },
   "layer": [
     {
       "data": {
-        "url": "malaysia_states.geojson",
+        "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/7_others/oceans.topojson",
         "format": {
-          "type": "json",
-          "property": "features"
+          "type": "topojson",
+          "feature": "oceans"
         }
       },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#e8f4f8"
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/3_choropleth_map/js/ne_110m_admin_0_countries.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "ne_110m_admin_0_countries"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#f0f0f0",
+        "stroke": "#cccccc",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/2_symbol_map/js/WorldMapWithGraticules.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "ne_110m_graticules_30"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": null,
+        "stroke": "#d0d0d0",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "data": {
+        "url": "gdp_state_real_supply.csv"
+      },
       "transform": [
-        {
-          "lookup": "properties.name",
-          "from": {
-            "data": {
-              "url": "gdp_state_real_supply.csv"
-            },
-            "key": "state",
-            "fields": ["value", "series", "date", "sector"]
-          }
-        },
         {
           "filter": "datum.series === 'abs'"
         },
@@ -58,6 +88,13 @@
           "filter": "datum.year == YearSelect"
         },
         {
+          "calculate": "datum.state === 'Kuala Lumpur' ? 'W.P. Kuala Lumpur' : datum.state === 'Labuan' ? 'W.P. Labuan' : datum.state === 'Putrajaya' ? 'W.P. Putrajaya' : datum.state",
+          "as": "state_mapped"
+        },
+        {
+          "filter": "datum.state !== 'Supra'"
+        },
+        {
           "aggregate": [
             {
               "op": "sum",
@@ -65,17 +102,26 @@
               "as": "total_gdp"
             }
           ],
-          "groupby": ["properties.name", "year"]
+          "groupby": ["state_mapped", "year"]
+        },
+        {
+          "lookup": "state_mapped",
+          "from": {
+            "data": {
+              "url": "malaysia_states.geojson",
+              "format": {
+                "type": "json",
+                "property": "features"
+              }
+            },
+            "key": "properties.name",
+            "fields": ["type", "properties", "geometry"]
+          }
         }
       ],
-      "projection": {
-        "type": "mercator",
-        "center": [109, 4],
-        "scale": 2000
-      },
       "mark": {
         "type": "geoshape",
-        "stroke": "#2c3e50",
+        "stroke": "white",
         "strokeWidth": 1.5
       },
       "encoding": {
@@ -83,26 +129,23 @@
           "field": "total_gdp",
           "type": "quantitative",
           "scale": {
-            "scheme": "viridis",
-            "type": "symlog"
+            "scheme": "plasma",
+            "type": "symlog",
+            "domain": [50000, 850000]
           },
           "legend": {
             "title": "Real GDP (RM million)",
+            "titleFontSize": 12,
+            "labelFontSize": 11,
             "format": ",.0f",
-            "orient": "bottom",
-            "direction": "horizontal"
+            "orient": "bottom-right",
+            "direction": "vertical",
+            "gradientLength": 200
           }
-        },
-        "opacity": {
-          "condition": {
-            "param": "StateSelection",
-            "value": 1
-          },
-          "value": 0.7
         },
         "tooltip": [
           {
-            "field": "properties.name",
+            "field": "state_mapped",
             "type": "nominal",
             "title": "State"
           },

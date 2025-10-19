@@ -1,0 +1,83 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 250,
+  "title": {
+    "text": "Real GDP Trends by State (2015-2023)",
+    "fontSize": 14
+  },
+  "data": {
+    "url": "gdp_state_real_supply.csv"
+  },
+  "transform": [
+    {
+      "filter": "datum.series === 'abs'"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "value",
+          "as": "total_gdp"
+        }
+      ],
+      "groupby": ["state", "date"]
+    },
+    {
+      "calculate": "year(datum.date)",
+      "as": "year"
+    }
+  ],
+  "mark": {
+    "type": "line",
+    "point": true,
+    "strokeWidth": 2
+  },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "ordinal",
+      "title": "Year",
+      "axis": {
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "total_gdp",
+      "type": "quantitative",
+      "title": "Real GDP (RM million)",
+      "scale": {
+        "zero": false
+      }
+    },
+    "color": {
+      "field": "state",
+      "type": "nominal",
+      "title": "State",
+      "scale": {
+        "scheme": "tableau20"
+      }
+    },
+    "opacity": {
+      "value": 0.7
+    },
+    "tooltip": [
+      {
+        "field": "state",
+        "type": "nominal",
+        "title": "State"
+      },
+      {
+        "field": "year",
+        "type": "ordinal",
+        "title": "Year"
+      },
+      {
+        "field": "total_gdp",
+        "type": "quantitative",
+        "title": "Real GDP (RM million)",
+        "format": ",.2f"
+      }
+    ]
+  }
+}

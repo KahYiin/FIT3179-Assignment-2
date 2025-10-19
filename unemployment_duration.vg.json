@@ -1,0 +1,102 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 650,
+  "height": 250,
+  "title": {
+    "text": "Unemployment Trends by Duration (2016-2025)",
+    "fontSize": 14
+  },
+  "params": [
+    {
+      "name": "DateRange",
+      "value": [1451606400000, 1725148800000],
+      "bind": {
+        "input": "range",
+        "min": 1451606400000,
+        "max": 1725148800000,
+        "step": 2629800000,
+        "name": "Date Range: "
+      }
+    }
+  ],
+  "data": {
+    "url": "lfs_month_duration.csv"
+  },
+  "transform": [
+    {
+      "fold": [
+        "unemployed_active_3mo",
+        "unemployed_active_6mo",
+        "unemployed_active_12mo",
+        "unemployed_active_long"
+      ],
+      "as": ["duration_type", "count"]
+    },
+    {
+      "calculate": "datum.duration_type === 'unemployed_active_3mo' ? 'Short-term (<3 months)' : datum.duration_type === 'unemployed_active_6mo' ? 'Medium-term (3-6 months)' : datum.duration_type === 'unemployed_active_12mo' ? 'Long-term (6-12 months)' : 'Very Long-term (>12 months)'",
+      "as": "duration_category"
+    },
+    {
+      "calculate": "year(datum.date)",
+      "as": "year"
+    }
+  ],
+  "mark": {
+    "type": "area"
+  },
+  "encoding": {
+    "x": {
+      "field": "date",
+      "type": "temporal",
+      "title": "Date",
+      "axis": {
+        "format": "%Y",
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "count",
+      "type": "quantitative",
+      "title": "Unemployed (thousands)",
+      "stack": "zero"
+    },
+    "color": {
+      "field": "duration_category",
+      "type": "nominal",
+      "title": "Duration Category",
+      "scale": {
+        "domain": [
+          "Short-term (<3 months)",
+          "Medium-term (3-6 months)",
+          "Long-term (6-12 months)",
+          "Very Long-term (>12 months)"
+        ],
+        "range": [
+          "#d4f1f4",
+          "#75e6da",
+          "#189ab4",
+          "#05445e"
+        ]
+      }
+    },
+    "tooltip": [
+      {
+        "field": "date",
+        "type": "temporal",
+        "title": "Date",
+        "format": "%B %Y"
+      },
+      {
+        "field": "duration_category",
+        "type": "nominal",
+        "title": "Duration"
+      },
+      {
+        "field": "count",
+        "type": "quantitative",
+        "title": "Unemployed (thousands)",
+        "format": ",.1f"
+      }
+    ]
+  }
+}

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malaysia Economic Dashboard</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    
+    header {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+    
+    header h1 {
+      font-size: 2.2em;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    header p {
+      font-size: 1em;
+      opacity: 0.95;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    
+    .info-banner {
+      background: #f8f9fa;
+      padding: 15px 40px;
+      border-bottom: 3px solid #667eea;
+      text-align: center;
+      font-size: 0.9em;
+      color: #2a5298;
+      font-weight: 500;
+    }
+    
+    .main-content {
+      padding: 30px;
+    }
+    
+    .viz-section {
+      margin-bottom: 40px;
+      background: #fafbfc;
+      border-radius: 12px;
+      padding: 25px;
+      border: 2px solid #e1e4e8;
+    }
+    
+    .viz-header {
+      margin-bottom: 20px;
+    }
+    
+    .viz-header h2 {
+      color: #1e3c72;
+      font-size: 1.4em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .viz-header .icon {
+      font-size: 1.3em;
+    }
+    
+    .viz-description {
+      color: #586069;
+      font-size: 0.95em;
+      line-height: 1.6;
+      max-width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    .viz-container {
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .two-column-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    
+    footer {
+      background: #2c3e50;
+      color: white;
+      padding: 30px 40px;
+      text-align: center;
+    }
+    
+    footer p {
+      margin: 8px 0;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    
+    footer .sources {
+      font-size: 0.9em;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.3);
+    }
+    
+    @media (max-width: 1100px) {
+      .two-column-section {
+        grid-template-columns: 1fr;
+      }
+      
+      header h1 {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🇲🇾 Mapping Malaysia's Economic Pulse</h1>
+      <p>
+        An interactive exploration
+        of Growth, Sectors,
+        and Labour Trends
+        across Malaysian states
+        from 2015-2025
+      </p>
+    </header>
+    
+    <div class="info-banner">
+      Interactive filters embedded
+      in each visualization
+      below. Hover for
+      details.
+    </div>
+    
+    <div class="main-content">
+      
+      <!-- Map Section -->
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2><span class="icon">🗺️</span> Real GDP by State</h2>
+          <div class="viz-description">
+            This choropleth map
+            displays Malaysia's economic
+            output across all
+            states. Darker shades
+            indicate higher GDP.
+            Use the year
+            slider to explore
+            GDP changes over
+            time. Click states
+            to select them.
+          </div>
+        </div>
+        <div class="viz-container">
+          <div id="map"></div>
+        </div>
+      </div>
+      
+      <!-- GDP Trends Section -->
+      <div class="viz-section">
+        <div class="viz-header">
+          <h2><span class="icon">📈</span> GDP Growth Trends</h2>
+          <div class="viz-description">
+            Track how each
+            state's real GDP
+            evolved from 2015
+            to 2023. Each
+            colored line represents
+            a different state.
+            Selangor and Johor
+            lead Malaysia's economy.
+            Hover over lines
+            for exact values.
+          </div>
+        </div>
+        <div class="viz-container">
+          <div id="gdp_trends"></div>
+        </div>
+      </div>
+      
+      <!-- Two Column Section -->
+      <div class="two-column-section">
+        
+        <!-- Sectoral Composition -->
+        <div class="viz-section">
+          <div class="viz-header">
+            <h2><span class="icon">🏭</span> Sectoral GDP Mix</h2>
+            <div class="viz-description">
+              See how different
+              economic sectors contribute
+              to each state's
+              GDP. Services dominate
+              most states. Select
+              different states and
+              years to compare
+              economic structures.
+            </div>
+          </div>
+          <div class="viz-container">
+            <div id="sectoral_composition"></div>
+          </div>
+        </div>
+        
+        <!-- Unemployment -->
+        <div class="viz-section">
+          <div class="viz-header">
+            <h2><span class="icon">👥</span> Unemployment Duration</h2>
+            <div class="viz-description">
+              Visualizes unemployment patterns
+              by job search
+              duration. The darkest
+              layer shows long-term
+              unemployment (over 12
+              months). Adjust year
+              sliders to focus
+              on specific periods.
+            </div>
+          </div>
+          <div class="viz-container">
+            <div id="unemployment"></div>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+    
+    <footer>
+      <p><strong>Data Sources:</strong></p>
+      <div class="sources">
+        <p>
+          GDP Data: Department
+          of Statistics Malaysia
+          (DOSM) | Labour
+          Force Survey: DOSM
+        </p>
+        <p>
+          Real GDP measured
+          in RM million
+          at constant 2015
+          prices
+        </p>
+      </div>
+      <p style="margin-top: 20px;">
+        Created by: Wong
+        Kah Yin |
+        Monash University Malaysia
+        | FIT3179 Data
+        Visualisation
+      </p>
+      <p style="font-size: 0.85em; opacity: 0.7;">
+        Dashboard created October
+        2025
+      </p>
+    </footer>
+  </div>
+  
+  <script src="vega_lite_vis.js"></script>
+</body>
+</html>

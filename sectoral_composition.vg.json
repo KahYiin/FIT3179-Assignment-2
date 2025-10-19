@@ -1,0 +1,123 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 650,
+  "height": 250,
+  "title": {
+    "text": "Sectoral GDP Composition by State",
+    "fontSize": 14
+  },
+  "params": [
+    {
+      "name": "SelectedState",
+      "value": "Selangor",
+      "bind": {
+        "input": "select",
+        "options": [
+          "Johor",
+          "Kedah",
+          "Kelantan",
+          "Melaka",
+          "Negeri Sembilan",
+          "Pahang",
+          "Penang",
+          "Perak",
+          "Perlis",
+          "Sabah",
+          "Sarawak",
+          "Selangor",
+          "Terengganu",
+          "Kuala Lumpur",
+          "Labuan",
+          "Putrajaya"
+        ],
+        "name": "Select State: "
+      }
+    },
+    {
+      "name": "SelectedYear",
+      "value": 2023,
+      "bind": {
+        "input": "range",
+        "min": 2015,
+        "max": 2023,
+        "step": 1,
+        "name": "Year: "
+      }
+    }
+  ],
+  "data": {
+    "url": "gdp_state_real_supply.csv"
+  },
+  "transform": [
+    {
+      "filter": "datum.series === 'abs'"
+    },
+    {
+      "filter": "datum.state === SelectedState"
+    },
+    {
+      "calculate": "year(datum.date)",
+      "as": "year"
+    },
+    {
+      "filter": "datum.year === SelectedYear"
+    },
+    {
+      "calculate": "datum.sector === 'p0' ? 'Total GDP' : datum.sector === 'p1' ? 'Agriculture' : datum.sector === 'p2' ? 'Mining' : datum.sector === 'p3' ? 'Manufacturing' : datum.sector === 'p4' ? 'Construction' : datum.sector === 'p5' ? 'Services' : datum.sector === 'p6' ? 'Government' : 'Other'",
+      "as": "sector_name"
+    },
+    {
+      "filter": "datum.sector !== 'p0'"
+    }
+  ],
+  "mark": {
+    "type": "bar"
+  },
+  "encoding": {
+    "x": {
+      "field": "value",
+      "type": "quantitative",
+      "title": "GDP Contribution (RM million)",
+      "stack": "normalize",
+      "axis": {
+        "format": "%"
+      }
+    },
+    "color": {
+      "field": "sector_name",
+      "type": "nominal",
+      "title": "Economic Sector",
+      "scale": {
+        "domain": [
+          "Agriculture",
+          "Mining",
+          "Manufacturing",
+          "Construction",
+          "Services",
+          "Government"
+        ],
+        "range": [
+          "#8dd3c7",
+          "#ffffb3",
+          "#bebada",
+          "#fb8072",
+          "#80b1d3",
+          "#fdb462"
+        ]
+      }
+    },
+    "tooltip": [
+      {
+        "field": "sector_name",
+        "type": "nominal",
+        "title": "Sector"
+      },
+      {
+        "field": "value",
+        "type": "quantitative",
+        "title": "GDP (RM million)",
+        "format": ",.2f"
+      }
+    ]
+  }
+}
